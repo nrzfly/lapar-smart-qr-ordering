@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Order #{{ order.order_id }}{% endblock %}
+{% block content %}
+<section class="card">
+  <h1>Order #{{ order.order_id }}</h1>
+  <p class="muted">{{ order.order_type }} order for Staff ID {{ order.staff_id }}</p>
+
+  <div id="notif-banner" class="notif-banner" hidden></div>
+
+  <div class="status-track">
+    {% for s in ["Pending", "Preparing", "Ready", "Completed"] %}
+    <div class="status-step {% if order.status == s %}active{% endif %}" data-status="{{ s }}">{{ s }}</div>
+    {% endfor %}
+  </div>
+
+  <table class="table">
+    <tbody>
+      {% for it in items %}
+      <tr><td>{{ it.name }} &times; {{ it.quantity }}</td><td>RM {{ "%.2f"|format(it.subtotal) }}</td></tr>
+      {% endfor %}
+      <tr class="total-row"><td>Total</td><td>RM {{ "%.2f"|format(order.total_amount) }}</td></tr>
+    </tbody>
+  </table>
+
+  {% if order.order_type == "MeetingRoom" %}
+  <p class="muted">Meeting Room: {{ order.meeting_room }} &middot; Requested time: {{ order.meeting_time }}</p>
+  {% endif %}
+
+  <p class="muted small">UC6 &middot; When your order status reaches <strong>Ready</strong>, collect it and pay at the Lazaria Cafe counter.</p>
+  <a class="btn btn-outline" href="{{ url_for('staff.menu', staff_id=staff_id) }}">Back to Menu</a>
+</section>
+
+<script>
+  const ORDER_ID = {{ order.order_id }};
+</script>
+<script src="{{ url_for('static', filename='js/notify.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,6 @@
+<nav class="admin-nav">
+  <a href="{{ url_for('admin.orders') }}" class="{{ 'active' if request.endpoint == 'admin.orders' }}">Orders</a>
+  <a href="{{ url_for('admin.menu') }}" class="{{ 'active' if request.endpoint == 'admin.menu' }}">Menu</a>
+  <a href="{{ url_for('admin.users') }}" class="{{ 'active' if request.endpoint == 'admin.users' }}">Users</a>
+  <a href="{{ url_for('admin.logout') }}" class="logout">Logout</a>
+</nav>

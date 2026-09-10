@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Scan to Order{% endblock %}
+{% block content %}
+<section class="hero">
+  <h1>Scan &amp; Order at Lazaria Cafe</h1>
+  <p class="muted">Scan the QR code below with your phone camera, or tap the button to open the menu directly on this device.</p>
+
+  {% if qr_uri %}
+  <div class="qr-box">
+    <img src="{{ qr_uri }}" alt="QR code to Lapar Smart menu" width="220" height="220">
+    <p class="qr-caption">UC1 &middot; Scan QR Code</p>
+  </div>
+  {% endif %}
+
+  <a class="btn btn-primary btn-lg" href="{{ url_for('staff.menu') }}">Open Daily Menu</a>
+
+  <p class="muted small">Direct link: <code>{{ menu_url }}</code></p>
+</section>
+
+<section class="card">
+  <h2>Meeting Room Catering</h2>
+  <p class="muted">Have a meeting event? Pre-order food and beverages to be served at your meeting room.</p>
+  <a class="btn btn-outline" href="{{ url_for('staff.menu') }}#meeting">Reserve Meeting Room Order</a>
+</section>
+
+<section class="card muted-card">
+  <h2>Cafe Admin?</h2>
+  <a class="btn btn-outline" href="{{ url_for('admin.login') }}">Go to Admin Dashboard</a>
+</section>
+{% endblock %}

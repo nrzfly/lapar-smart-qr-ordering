@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Daily Menu{% endblock %}
+{% block content %}
+<section class="card">
+  <h1>Today's Menu <span class="muted small">({{ today }})</span></h1>
+
+  {% if request.args.get('error') == 'empty_cart' %}
+  <p class="alert">Please select at least one item before submitting your order.</p>
+  {% endif %}
+
+  <label class="field">
+    <span>Staff ID</span>
+    <input type="text" name="staff_id" form="order-form" value="{{ staff_id }}">
+  </label>
+</section>
+
+<form id="order-form" method="post" action="{{ url_for('staff.place_order') }}">
+  <input type="hidden" name="order_type" id="order_type" value="Counter">
+
+  {% set categories = items|map(attribute='category')|unique|list %}
+  {% for cat in categories %}
+  <section class="card">
+    <h2>{{ cat }}</h2>
+    {% for item in items if item.category == cat %}
+    <div class="menu-row">
+      <div class="menu-info">
+        <div class="menu-name">{{ item.name }}</div>
+        <div class="menu-price">RM {{ "%.2f"|format(item.price) }}</div>
+      </div>
+      <div class="qty-control">
+        <input type="hidden" name="item_id" value="{{ item.item_id }}">
+        <button type="button" class="qty-btn" onclick="changeQty(this, -1)">&minus;</button>
+        <input type="number" name="quantity" class="qty-input" value="0" min="0" data-price="{{ item.price }}" oninput="updateTotal()">
+        <button type="button" class="qty-btn" onclick="changeQty(this, 1)">&plus;</button>
+      </div>
+    </div>
+    {% endfor %}
+  </section>
+  {% endfor %}
+
+  <section class="card" id="meeting">
+    <label class="checkbox-field">
+      <input type="checkbox" id="is_meeting" onchange="toggleMeeting()">
+      <span>UC4 &middot; This is a Meeting Room reservation order</span>
+    </label>
+    <div id="meeting-fields" class="meeting-fields" hidden>
+      <label class="field">
+        <span>Meeting Room</span>
+        <input type="text" name="meeting_room" placeholder="e.g. Meeting Room 2">
+      </label>
+      <label class="field">
+        <span>Requested Date &amp; Time</span>
+        <input type="datetime-local" name="meeting_time">
+      </label>
+    </div>
+  </section>
+
+  <div class="cart-bar">
+    <div>Total: <strong id="total-display">RM 0.00</strong></div>
+    <button type="submit" class="btn btn-primary">Submit Order</button>
+  </div>
+</form>
+
+<script src="{{ url_for('static', filename='js/menu.js') }}"></script>
+{% endblock %}

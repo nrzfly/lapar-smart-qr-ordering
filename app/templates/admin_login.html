@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Admin Login{% endblock %}
+{% block content %}
+<section class="card narrow">
+  <h1>Cafe Admin Login</h1>
+  {% if error %}<p class="alert">{{ error }}</p>{% endif %}
+  <form method="post">
+    <label class="field">
+      <span>Passcode</span>
+      <input type="password" name="passcode" autofocus required>
+    </label>
+    <button type="submit" class="btn btn-primary">Login</button>
+  </form>
+  <p class="muted small">Demo passcode: <code>admin123</code> (unless changed via the ADMIN_PASSCODE environment variable)</p>
+</section>
+{% endblock %}
