@@ -2,6 +2,10 @@
 
 A mobile-first QR code ordering system for **Lazaria Cafe**, developed for FAMA (Federal Agricultural Marketing Authority) staff, built as the implementation for the BIT4008 Undergraduate Project. This app implements the ten use cases described in `002_Chapter_Page_LaparSmart_-_QR_Menu_Ordering_System.docx`.
 
+- **Live demo:** https://lapar-smart.vercel.app
+- **Repository:** https://github.com/nrzfly/lapar-smart-qr-ordering
+- **Admin dashboard:** https://lapar-smart.vercel.app/admin/login (passcode `admin123`)
+
 ## Features (mapped to use cases)
 
 | # | Use Case | Where |
@@ -41,9 +45,17 @@ vercel login
 vercel --prod
 ```
 
-### Demo data note
+### Demo data note — read before presenting
 
-Vercel's serverless functions do not provide a persistent disk. This app stores its SQLite database at `/tmp/laparsmart.db`, which is seeded automatically on first request and persists only for the lifetime of a warm serverless instance — perfect for a live click-through demo, but data **resets** on a cold start or redeploy. For a production deployment, replace `app/db.py` with a managed database such as PostgreSQL (e.g. Vercel Postgres, Supabase, or Neon).
+Vercel's serverless functions do not provide a persistent disk. This app stores its SQLite database at `/tmp/laparsmart.db`, seeded automatically on first request, which persists only for the lifetime of **one warm serverless instance**.
+
+In practice this means:
+- A single browser tab clicking through one flow start-to-finish (e.g. place an order, then immediately open its own status page) usually stays on the same warm instance and works smoothly.
+- But Vercel may route different requests — even seconds apart, e.g. a staff order followed by loading the admin dashboard — to **different** instances, each with its own empty `/tmp`. When that happens an order placed on one instance will not appear on `/admin/orders` served by another, and data resets entirely on a cold start or redeploy.
+
+This was confirmed during testing: an order placed on `/menu` did not appear on `/admin/orders` moments later because the two requests landed on different instances. **For a live presentation, the safest approach is to record a screen-capture walkthrough in one continuous local run (`python run.py`)** rather than relying on the deployed instance to keep state across separate page loads, or accept that the Vercel demo may need a page refresh/retry to land back on the same warm instance.
+
+For a reliable multi-user deployment, replace `app/db.py` with a managed database such as PostgreSQL (e.g. Vercel Postgres, Supabase, or Neon) — the rest of the app (routes, templates) would not need to change since all database access goes through `get_db()`.
 
 ## Project structure
 

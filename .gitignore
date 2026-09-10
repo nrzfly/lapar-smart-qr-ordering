@@ -6,3 +6,5 @@ instance/
 *.db
 .vercel
 .env
+
+.vercel
