@@ -21,16 +21,20 @@
             <td>
               {% if item.is_available %}<span class="badge bg-success">Yes</span>{% else %}<span class="badge bg-secondary">No</span>{% endif %}
             </td>
-            <td class="text-end">
+            <td class="text-end text-nowrap">
               <form method="post" class="d-inline">
                 <input type="hidden" name="action" value="toggle">
                 <input type="hidden" name="item_id" value="{{ item.item_id }}">
-                <button type="submit" class="btn btn-sm btn-outline-secondary">{{ "Hide" if item.is_available else "Show" }}</button>
+                <button type="submit" class="btn btn-sm btn-outline-secondary" title="{{ 'Hide' if item.is_available else 'Show' }}">
+                  <i class="fa-solid {{ 'fa-eye-slash' if item.is_available else 'fa-eye' }}"></i>
+                </button>
               </form>
               <form method="post" class="d-inline" onsubmit="return confirm('Remove this item?')">
                 <input type="hidden" name="action" value="delete">
                 <input type="hidden" name="item_id" value="{{ item.item_id }}">
-                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
               </form>
             </td>
           </tr>

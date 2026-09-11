@@ -17,7 +17,7 @@
         <span class="logo-abbr fw-bold text-primary fs-3"><i class="fa-solid fa-bowl-food"></i></span>
         <span class="brand-title fw-bold fs-5 ms-2">Lapar Smart</span>
       </a>
-      <div class="nav-control">
+      <div class="nav-control" id="laparSidebarToggle">
         <div class="hamburger">
           <span class="line"></span><span class="line"></span><span class="line"></span>
         </div>
@@ -29,15 +29,15 @@
         <nav class="navbar navbar-expand">
           <div class="collapse navbar-collapse justify-content-between">
             <div class="header-left">
-              <h4 class="mb-0 fw-bold">{% block page_title %}Admin Dashboard{% endblock %}</h4>
+              <h4 class="mb-0 fw-bold lapar-page-title">{% block page_title %}Admin Dashboard{% endblock %}</h4>
             </div>
             <ul class="navbar-nav header-right">
-              <li class="nav-item">
+              <li class="nav-item d-none d-sm-block">
                 <span class="me-3 text-muted"><i class="fa-solid fa-shop me-1"></i>Lazaria Cafe</span>
               </li>
               <li class="nav-item">
                 <a href="{{ url_for('admin.logout') }}" class="btn btn-outline-danger btn-sm btn-rounded">
-                  <i class="fa-solid fa-right-from-bracket me-1"></i>Logout
+                  <i class="fa-solid fa-right-from-bracket me-1"></i><span class="d-none d-sm-inline">Logout</span>
                 </a>
               </li>
             </ul>
@@ -46,7 +46,8 @@
       </div>
     </div>
 
-    <div class="deznav">
+    <div class="lapar-sidebar-backdrop" id="laparSidebarBackdrop"></div>
+    <div class="deznav" id="laparDeznav">
       <div class="deznav-scroll">
         <ul class="metismenu" id="menu">
           <li class="{{ 'mm-active' if request.endpoint == 'admin.orders' }}">
@@ -87,6 +88,33 @@
   <script src="{{ url_for('static', filename='vendor/dashboard/vendor/global/global.min.js') }}"></script>
   <script src="{{ url_for('static', filename='vendor/dashboard/js/custom.min.js') }}"></script>
   <script src="{{ url_for('static', filename='vendor/dashboard/js/deznav-init.js') }}"></script>
+  <script>
+    // Davur's own sidebar JS is desktop-oriented (mini/collapsed toggle) and
+    // fights with mobile off-canvas behavior, so drive the mobile sidebar
+    // open/close ourselves directly, independent of its dezSettings system.
+    (function () {
+      var deznav = document.getElementById('laparDeznav');
+      var backdrop = document.getElementById('laparSidebarBackdrop');
+      var toggle = document.getElementById('laparSidebarToggle');
+
+      function openSidebar() {
+        deznav.classList.add('lapar-sidebar-open');
+        backdrop.classList.add('show');
+      }
+      function closeSidebar() {
+        deznav.classList.remove('lapar-sidebar-open');
+        backdrop.classList.remove('show');
+      }
+      toggle.addEventListener('click', function () {
+        if (window.innerWidth > 991) return; // desktop nav is always visible
+        deznav.classList.contains('lapar-sidebar-open') ? closeSidebar() : openSidebar();
+      });
+      backdrop.addEventListener('click', closeSidebar);
+      deznav.querySelectorAll('a').forEach(function (a) {
+        a.addEventListener('click', closeSidebar);
+      });
+    })();
+  </script>
   {% block scripts %}{% endblock %}
 </body>
 </html>

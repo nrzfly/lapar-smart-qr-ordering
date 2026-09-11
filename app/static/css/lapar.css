@@ -2,6 +2,30 @@
 
 body.lapar-body { background: #f4f6fa; }
 
+/* Davur's .logo-header assumes a small square logo IMAGE (fixed 100px box);
+   we put brand text in it instead, so give it room to size to its content
+   at every breakpoint instead of wrapping and blowing out the fixed-height header. */
+.site-header.style-1 .logo-header {
+  width: auto;
+  min-width: 0;
+  height: auto;
+  display: flex;
+  align-items: center;
+}
+.site-header.style-1 {
+  height: auto;
+  min-height: 5rem;
+}
+@media only screen and (max-width: 767px) {
+  .site-header.style-1 .container-fluid {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  .site-header.style-1 .logo-header {
+    margin-left: 0;
+  }
+}
+
 .lapar-brand {
   font-weight: 900;
   font-size: 1.3rem;
@@ -10,6 +34,11 @@ body.lapar-body { background: #f4f6fa; }
   display: flex;
   align-items: center;
   gap: 8px;
+  white-space: nowrap;
+}
+@media only screen and (max-width: 400px) {
+  .lapar-brand { font-size: 1.05rem; }
+  .lapar-brand i { font-size: 0.95rem; }
 }
 .lapar-subtitle {
   font-size: 0.8rem;
@@ -17,6 +46,36 @@ body.lapar-body { background: #f4f6fa; }
   display: block;
   margin-top: 4px;
 }
+/* Mobile header nav — Davur hides its own navbar-toggler at <=991px and expects
+   a different (POS-only) hamburger we don't use; restore ours so Bootstrap's
+   built-in collapse JS can open the off-canvas nav it already styles. */
+@media only screen and (max-width: 991px) {
+  .site-header.style-1 .navbar-toggler {
+    display: block !important;
+    float: none;
+    margin: 12px 0 12px 16px;
+  }
+  .header-nav .nav {
+    float: none;
+  }
+}
+.header-nav .close-nav {
+  display: none;
+}
+@media only screen and (max-width: 991px) {
+  .header-nav.show .close-nav {
+    display: block;
+    text-align: right;
+    padding: 16px 20px 0;
+  }
+  .header-nav.show .close-nav button {
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    color: #333;
+  }
+}
+
 .lapar-container {
   max-width: 900px;
   margin: 0 auto;
@@ -97,3 +156,37 @@ body.lapar-body { background: #f4f6fa; }
 
 /* Admin */
 .lapar-admin-nav .badge-count { margin-left: auto; }
+
+.lapar-page-title {
+  font-size: 1.15rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media only screen and (max-width: 575px) {
+  .lapar-page-title { font-size: 0.95rem; max-width: 150px; }
+  .lapar-page-title i { display: none; } /* icon crowds a long title on very small screens */
+}
+
+/* Mobile admin sidebar — driven by our own JS toggle (see admin_base.html),
+   independent of Davur's desktop-oriented dezSettings collapse system. */
+@media only screen and (max-width: 991px) {
+  #laparDeznav {
+    left: -300px !important;
+    transition: left 0.3s ease;
+    z-index: 1000;
+  }
+  #laparDeznav.lapar-sidebar-open {
+    left: 0 !important;
+  }
+}
+.lapar-sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 999;
+}
+.lapar-sidebar-backdrop.show {
+  display: block;
+}
