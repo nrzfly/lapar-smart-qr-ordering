@@ -1,5 +1,40 @@
 /* Lapar Smart — small overrides layered on top of the Davur template's own style.css */
 
+:root {
+  --lapar-brown-dark: #3b2a1e;
+  --lapar-brown: #5c4030;
+  --lapar-brown-light: #7a5a42;
+  --lapar-cream: #e8d4a9;
+  --lapar-cream-hover: #d9c08a;
+  --lapar-cream-text: #f7ecd9;
+  --lapar-muted-on-brown: rgba(247, 236, 217, 0.7);
+
+  /* The admin dashboard's Davur skin doesn't use Bootstrap's --bs-*
+     button variables at all -- it has its own older --primary /
+     --rgba-primary-N custom-property system (400+ references: sidebar
+     active states, badges, spinners, links...). Redefining it here
+     cascades cream through all of that in one shot. */
+  --primary: var(--lapar-cream);
+  --primary-hover: var(--lapar-cream-hover);
+  --secondary: var(--lapar-brown-dark);
+  --rgba-primary-1: rgba(232, 212, 169, 0.1);
+  --rgba-primary-2: rgba(232, 212, 169, 0.2);
+  --rgba-primary-3: rgba(232, 212, 169, 0.3);
+  --rgba-primary-4: rgba(232, 212, 169, 0.4);
+  --rgba-primary-5: rgba(232, 212, 169, 0.5);
+  --rgba-primary-6: rgba(232, 212, 169, 0.6);
+  --rgba-primary-7: rgba(232, 212, 169, 0.7);
+  --rgba-primary-8: rgba(232, 212, 169, 0.8);
+  --rgba-primary-9: rgba(232, 212, 169, 0.9);
+
+  /* Bootstrap's own --bs-primary(-rgb) is a separate system again (used
+     by utilities like .bg-primary/.border-primary via rgba(var(...))
+     baked-in !important rules) -- redefine it too so every "blue" utility
+     class flips to cream without having to fight each one individually. */
+  --bs-primary: var(--lapar-cream);
+  --bs-primary-rgb: 232, 212, 169;
+}
+
 body.lapar-body { background: #f4f6fa; }
 
 /* Davur's #main-wrapper starts at opacity:0 and only reaches opacity:1 once
@@ -13,10 +48,121 @@ body.lapar-body { background: #f4f6fa; }
   overflow: visible !important;
 }
 
+/* =====================================================================
+   Theme recolor: white surfaces -> brown, blue accent -> cream.
+   Buttons have their own opaque fill, so a blanket swap is safe there.
+   Outline buttons and bare "text-primary" icons are transparent/inherit
+   whatever is behind them though -- on the light cream wallpaper cream
+   text would vanish, so those default to dark brown and only flip to
+   cream once nested inside a (now brown) .card.
+   ===================================================================== */
+.btn-primary {
+  --bs-btn-color: var(--lapar-brown-dark);
+  --bs-btn-bg: var(--lapar-cream);
+  --bs-btn-border-color: var(--lapar-cream);
+  --bs-btn-hover-color: var(--lapar-brown-dark);
+  --bs-btn-hover-bg: var(--lapar-cream-hover);
+  --bs-btn-hover-border-color: var(--lapar-cream-hover);
+  --bs-btn-active-color: var(--lapar-brown-dark);
+  --bs-btn-active-bg: var(--lapar-cream-hover);
+  --bs-btn-active-border-color: var(--lapar-cream-hover);
+  --bs-btn-disabled-color: var(--lapar-brown-dark);
+  --bs-btn-disabled-bg: var(--lapar-cream);
+  --bs-btn-disabled-border-color: var(--lapar-cream);
+  /* Admin dashboard skin has its own later, higher-specificity rules
+     (".btn.btn-primary" for background/border, ".btn.btn-success,
+     .btn.btn-primary,..." for a hardcoded white text color) that beat a
+     plain ".btn-primary" selector -- !important is needed to win here. */
+  color: var(--lapar-brown-dark) !important;
+  background-color: var(--lapar-cream) !important;
+  border-color: var(--lapar-cream) !important;
+}
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active {
+  color: var(--lapar-brown-dark) !important;
+  background-color: var(--lapar-cream-hover) !important;
+  border-color: var(--lapar-cream-hover) !important;
+}
+.btn-outline-primary {
+  --bs-btn-color: var(--lapar-brown-dark);
+  --bs-btn-border-color: var(--lapar-brown-dark);
+  --bs-btn-hover-color: var(--lapar-brown-dark);
+  --bs-btn-hover-bg: var(--lapar-cream);
+  --bs-btn-hover-border-color: var(--lapar-cream);
+  --bs-btn-active-color: var(--lapar-brown-dark);
+  --bs-btn-active-bg: var(--lapar-cream);
+  --bs-btn-active-border-color: var(--lapar-cream);
+  color: var(--lapar-brown-dark) !important;
+  border-color: var(--lapar-brown-dark) !important;
+}
+.btn-outline-primary:hover {
+  color: var(--lapar-brown-dark) !important;
+  background-color: var(--lapar-cream) !important;
+  border-color: var(--lapar-brown-dark) !important;
+}
+.card .btn-outline-primary {
+  --bs-btn-color: var(--lapar-cream);
+  --bs-btn-border-color: var(--lapar-cream);
+  color: var(--lapar-cream);
+  border-color: var(--lapar-cream);
+}
+.card .btn-outline-primary:hover {
+  color: var(--lapar-brown-dark) !important;
+  background-color: var(--lapar-cream) !important;
+  border-color: var(--lapar-cream) !important;
+}
+.text-primary { color: var(--lapar-brown-dark) !important; }
+.card .text-primary { color: var(--lapar-cream) !important; }
+
+/* Admin menu table's "Hide" toggle is btn-outline-secondary, whose dark
+   slate-gray default is nearly invisible on the now-brown card. */
+.card .btn-outline-secondary {
+  --bs-btn-color: var(--lapar-cream);
+  --bs-btn-border-color: var(--lapar-cream);
+  color: var(--lapar-cream);
+  border-color: var(--lapar-cream);
+}
+
+/* Cards are the app's main "white" surface -> warm brown, cream text.
+   Davur defines .card twice; the second copy (a "widget" variant later
+   in style.css) hardcodes background-color: #fff directly rather than
+   through --bs-card-bg, so only changing the variable has no effect --
+   we have to set background-color itself here too. */
+.card {
+  --bs-card-bg: var(--lapar-brown);
+  --bs-card-cap-bg: rgba(255, 255, 255, 0.07);
+  background-color: var(--lapar-brown);
+  color: var(--lapar-cream-text);
+}
+.card .text-muted { color: var(--lapar-muted-on-brown) !important; }
+.card h1, .card h2, .card h3, .card h4, .card h5, .card h6,
+.card .name, .card .price, .card label { color: var(--lapar-cream-text); }
+/* Davur's ".item-card .info .name" (3 classes) and the global heading
+   reset "h1,...,h6" both have higher specificity than the rules above
+   and hardcode near-black/navy text, so they still win on top of the
+   now-brown card background -- pin these explicitly. */
+.item-card .info .name { color: var(--lapar-cream-text) !important; }
+.card code { background: rgba(255, 255, 255, 0.14); color: var(--lapar-cream-text); }
+
+/* .table hardcodes its own text color rather than inheriting from .card. */
+.table { --bs-table-color: var(--lapar-cream-text); }
+.table-hover > tbody > tr:hover > * { color: var(--lapar-cream-text); --bs-table-accent-bg: rgba(255, 255, 255, 0.06); }
+
+/* bg-light (category chip) stays legible on brown; status colors
+   (danger/warning/success/secondary) are untouched on purpose. */
+.badge.bg-light { color: var(--lapar-brown-dark) !important; }
+
+/* Status track's active step hardcodes bg-primary + text-white, which is
+   unreadable once bg-primary-ish cream is involved -- force dark text. */
+.status-step.bg-primary { color: var(--lapar-brown-dark) !important; }
+/* Inactive steps keep Bootstrap's literal gray bg-light chip (not the
+   card's brown), so the card's cream .text-muted override is too pale
+   here -- pin dark text like the .badge.bg-light case above. */
+.status-step.bg-light { color: var(--lapar-brown-dark) !important; }
+
 /* ---------------- Top bar: centered logo + subtitle ---------------- */
 .lapar-topbar {
-  background: #fff;
-  border-bottom: 1px solid #ece9f1;
+  background: var(--lapar-brown);
+  border-bottom: 1px solid var(--lapar-brown-dark);
   padding: 14px 16px;
   text-align: center;
 }
@@ -34,7 +180,7 @@ body.lapar-body { background: #f4f6fa; }
 .lapar-topbar-sub {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #6b7280;
+  color: var(--lapar-cream-text);
   letter-spacing: 0.3px;
 }
 
@@ -80,12 +226,12 @@ body.lapar-body { background: #f4f6fa; }
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #9aa0ac;
+  color: var(--lapar-brown);
   margin-bottom: 10px;
   padding-left: 4px;
 }
 .lapar-side-nav {
-  background: #fff;
+  background: var(--lapar-brown);
   border-radius: 14px;
   box-shadow: 0 6px 20px rgba(20, 20, 40, 0.06);
   padding: 10px;
@@ -99,20 +245,20 @@ body.lapar-body { background: #f4f6fa; }
   gap: 10px;
   padding: 10px 12px;
   border-radius: 10px;
-  color: #4b5162;
+  color: var(--lapar-cream-text);
   text-decoration: none;
   font-weight: 600;
   font-size: 0.92rem;
 }
-.lapar-side-nav a i { width: 18px; text-align: center; color: var(--primary, #2f4cdd); }
-.lapar-side-nav a:hover { background: #f3f4fb; }
-.lapar-side-nav a.active { background: var(--primary, #2f4cdd); color: #fff; }
-.lapar-side-nav a.active i { color: #fff; }
+.lapar-side-nav a i { width: 18px; text-align: center; color: var(--lapar-cream); }
+.lapar-side-nav a:hover { background: var(--lapar-brown-light); }
+.lapar-side-nav a.active { background: var(--lapar-cream); color: var(--lapar-brown-dark); }
+.lapar-side-nav a.active i { color: var(--lapar-brown-dark); }
 
 .lapar-panel-center { min-width: 0; }
 
 .lapar-side-card {
-  background: #fff;
+  background: var(--lapar-brown);
   border-radius: 14px;
   box-shadow: 0 6px 20px rgba(20, 20, 40, 0.06);
   padding: 18px 16px;
@@ -121,12 +267,12 @@ body.lapar-body { background: #f4f6fa; }
 }
 .lapar-side-card-icon {
   font-size: 1.6rem;
-  color: var(--primary, #2f4cdd);
+  color: var(--lapar-cream);
   margin-bottom: 8px;
   display: block;
 }
-.lapar-side-card h6 { font-weight: 700; margin-bottom: 6px; }
-.lapar-side-card p { font-size: 0.82rem; color: #8a8f9c; margin-bottom: 12px; }
+.lapar-side-card h6 { font-weight: 700; margin-bottom: 6px; color: var(--lapar-cream-text); }
+.lapar-side-card p { font-size: 0.82rem; color: var(--lapar-muted-on-brown); margin-bottom: 12px; }
 
 @media only screen and (max-width: 991px) {
   .lapar-shell {
@@ -154,7 +300,7 @@ body.lapar-body { background: #f4f6fa; }
 }
 .lapar-footer {
   text-align: center;
-  color: #9099a3;
+  color: var(--lapar-brown);
   font-size: 0.78rem;
   padding: 24px;
   position: relative;
@@ -165,9 +311,9 @@ body.lapar-body { background: #f4f6fa; }
 .lapar-qr-box {
   display: inline-block;
   padding: 16px;
-  background: #fff;
+  background: var(--lapar-brown);
   border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(47, 76, 221, 0.12);
+  box-shadow: 0 10px 30px rgba(59, 42, 30, 0.18);
 }
 .lapar-qr-box img { border-radius: 8px; display: block; }
 
@@ -178,8 +324,8 @@ body.lapar-body { background: #f4f6fa; }
 .dish-icon-tile {
   height: 110px;
   display: flex; align-items: center; justify-content: center;
-  background: linear-gradient(135deg, #eef1fd, #f7f4ff);
-  color: var(--primary, #2f4cdd);
+  background: linear-gradient(135deg, var(--lapar-brown-light), var(--lapar-brown));
+  color: var(--lapar-cream);
   font-size: 2.4rem;
 }
 .lapar-qty-row {
@@ -188,31 +334,40 @@ body.lapar-body { background: #f4f6fa; }
 }
 .lapar-qty-control { display: flex; align-items: center; gap: 8px; }
 .lapar-qty-control .qty-btn {
-  width: 30px; height: 30px; border-radius: 50%; border: 1px solid #e4e6ef;
-  background: #fff; font-weight: 700; line-height: 1;
+  width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--lapar-brown-light);
+  background: var(--lapar-brown-light); color: var(--lapar-cream-text); font-weight: 700; line-height: 1;
 }
 .lapar-qty-control .qty-input {
-  width: 42px; text-align: center; border: 1px solid #e4e6ef; border-radius: 6px; padding: 4px;
+  width: 42px; text-align: center; border: 1px solid var(--lapar-brown-light); border-radius: 6px; padding: 4px;
+  background: var(--lapar-cream-text); color: var(--lapar-brown-dark);
 }
 
 /* Catering packages */
 .lapar-package-card {
-  border: 2px solid #e4e6ef;
+  background: var(--lapar-brown);
+  border: 2px solid var(--lapar-brown-light);
   border-radius: 14px;
   padding: 16px;
   height: 100%;
   cursor: pointer;
+  color: var(--lapar-cream-text);
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
-.lapar-package-card:hover { border-color: #c7cdf5; }
+.lapar-package-card .text-muted { color: var(--lapar-muted-on-brown) !important; }
+.lapar-package-card .text-primary { color: var(--lapar-cream) !important; }
+.lapar-package-card h1, .lapar-package-card h2, .lapar-package-card h3,
+.lapar-package-card h4, .lapar-package-card h5, .lapar-package-card h6 {
+  color: var(--lapar-cream-text) !important;
+}
+.lapar-package-card:hover { border-color: var(--lapar-cream); }
 .lapar-package-card.selected {
-  border-color: var(--primary, #2f4cdd);
-  box-shadow: 0 6px 18px rgba(47, 76, 221, 0.15);
+  border-color: var(--lapar-cream);
+  box-shadow: 0 6px 18px rgba(232, 212, 169, 0.25);
 }
 .lapar-package-card .pax-badge {
   display: inline-block;
-  background: #eef1fd;
-  color: var(--primary, #2f4cdd);
+  background: var(--lapar-cream);
+  color: var(--lapar-brown-dark);
   font-weight: 700;
   font-size: 0.78rem;
   padding: 3px 10px;
@@ -223,16 +378,18 @@ body.lapar-body { background: #f4f6fa; }
 /* Sticky cart bar */
 .lapar-cart-bar {
   position: fixed; left: 0; right: 0; bottom: 0;
-  background: #fff; border-top: 1px solid #e4e6ef;
+  background: var(--lapar-brown); border-top: 1px solid var(--lapar-brown-dark);
   padding: 14px 20px; z-index: 50;
   display: flex; align-items: center; justify-content: space-between;
-  box-shadow: 0 -6px 20px rgba(0,0,0,0.06);
+  box-shadow: 0 -6px 20px rgba(0,0,0,0.2);
 }
+.lapar-cart-bar .text-muted { color: var(--lapar-muted-on-brown) !important; }
+.lapar-cart-bar strong { color: var(--lapar-cream-text); }
 
 /* Order status */
 .lapar-status-header h4, .lapar-status-header h3 { color: #fff; margin: 0; }
 .lapar-order-list { list-style: none; padding: 0; margin: 0; }
-.lapar-order-list li { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #eee; }
+.lapar-order-list li { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed rgba(255,255,255,0.15); }
 .lapar-order-list li:last-child { border-bottom: none; }
 .lapar-notif-banner {
   border-radius: 10px; padding: 14px 16px; margin-bottom: 18px; font-weight: 600;
@@ -274,3 +431,34 @@ body.lapar-body { background: #f4f6fa; }
 .lapar-sidebar-backdrop.show {
   display: block;
 }
+
+/* =====================================================================
+   Admin dashboard chrome (sidebar + top header) is the last big white
+   surface -> brown, same as everywhere else. This also fixes two real
+   contrast bugs the --primary: cream swap otherwise introduces here:
+   the active sidebar item rendered cream text on a barely-tinted white
+   pill (nearly invisible), and .brand-title is white-on-white by
+   default in this Davur skin (only ever meant to show on a dark navbar).
+   ===================================================================== */
+.deznav, .header, .nav-header {
+  background-color: var(--lapar-brown) !important;
+}
+.nav-header .brand-title { color: var(--lapar-cream-text); }
+.header .text-muted, .nav-header .text-muted { color: var(--lapar-muted-on-brown) !important; }
+.header .text-primary, .nav-header .text-primary { color: var(--lapar-cream) !important; }
+.lapar-page-title { color: var(--lapar-cream-text) !important; }
+
+.deznav .metismenu > li > a {
+  color: var(--lapar-muted-on-brown);
+}
+.deznav .metismenu > li > a i { color: var(--lapar-cream); }
+.deznav .metismenu > li > a:hover {
+  background: var(--lapar-brown-light) !important;
+  color: var(--lapar-cream-text) !important;
+}
+.deznav .metismenu > li.mm-active > a {
+  background: var(--lapar-cream) !important;
+  color: var(--lapar-brown-dark) !important;
+}
+.deznav .metismenu > li.mm-active > a i { color: var(--lapar-brown-dark) !important; }
+.nav-control .hamburger .line { background-color: var(--lapar-cream); }
