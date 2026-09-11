@@ -15,6 +15,25 @@ def get_db_path():
 
 
 def get_db():
+    """Returns a DB-API connection. When TURSO_DATABASE_URL is set (always
+    the case in production, since Vercel's /tmp is wiped per instance and
+    was silently dropping orders written by a different warm instance) this
+    is a remote Turso database; otherwise it's a local sqlite3 file for
+    offline development. turso_serverless is DB-API 2.0 / sqlite3-shaped
+    (.execute/.executemany/.executescript, cursor.lastrowid, row_factory),
+    so nothing outside this function needs to know which backend is active."""
+    turso_url = os.environ.get("TURSO_DATABASE_URL")
+    if turso_url:
+        import turso_serverless
+
+        conn = turso_serverless.connect(turso_url, auth_token=os.environ.get("TURSO_AUTH_TOKEN"))
+        conn.row_factory = turso_serverless.Row
+        try:
+            conn.execute("PRAGMA foreign_keys = ON")
+        except Exception:
+            pass
+        return conn
+
     conn = sqlite3.connect(get_db_path())
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
