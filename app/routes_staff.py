@@ -33,6 +33,7 @@ def landing():
 @staff_bp.route("/menu")
 def menu():
     """UC2: View Daily Menu."""
+    staff_id = request.args.get("staff_id", "S001")
     db = get_db()
     items = db.execute(
         "SELECT * FROM menu_item WHERE available_date = ? AND is_available = 1 ORDER BY category, name",
@@ -41,9 +42,14 @@ def menu():
     packages = db.execute(
         "SELECT * FROM catering_package WHERE is_available = 1 ORDER BY pax"
     ).fetchall()
+    my_orders = db.execute(
+        "SELECT * FROM orders WHERE staff_id = ? ORDER BY order_id DESC LIMIT 10",
+        (staff_id,),
+    ).fetchall()
     db.close()
-    staff_id = request.args.get("staff_id", "S001")
-    return render_template("menu.html", items=items, packages=packages, staff_id=staff_id, today=today_str())
+    return render_template(
+        "menu.html", items=items, packages=packages, staff_id=staff_id, today=today_str(), my_orders=my_orders
+    )
 
 
 @staff_bp.route("/order", methods=["POST"])

@@ -37,6 +37,7 @@
         </main>
 
         <aside class="lapar-panel lapar-panel-right">
+          {% block right_panel %}
           <div class="lapar-side-card">
             <i class="fa-solid fa-user-shield lapar-side-card-icon"></i>
             <h6>Cafe Admin Login</h6>
@@ -49,6 +50,7 @@
             <p>Booking a meeting? Order a bulk catering package for your event.</p>
             <a href="{{ url_for('staff.menu') }}#meeting" class="btn btn-primary btn-sm btn-rounded w-100">Reserve Catering</a>
           </div>
+          {% endblock %}
         </aside>
       </div>
     </div>

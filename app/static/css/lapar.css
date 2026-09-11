@@ -274,6 +274,35 @@ body.lapar-body { background: #f4f6fa; }
 .lapar-side-card h6 { font-weight: 700; margin-bottom: 6px; color: var(--lapar-cream-text); }
 .lapar-side-card p { font-size: 0.82rem; color: var(--lapar-muted-on-brown); margin-bottom: 12px; }
 
+.lapar-order-history-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+}
+.lapar-order-history-list li {
+  padding: 8px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+.lapar-order-history-list li:first-child { border-top: none; padding-top: 0; }
+.lapar-order-history-list a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: var(--lapar-cream-text);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+.lapar-order-history-list a:hover { color: var(--lapar-cream); }
+.lapar-order-history-date {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--lapar-muted-on-brown);
+  margin-top: 2px;
+}
+
 @media only screen and (max-width: 991px) {
   .lapar-shell {
     grid-template-columns: 1fr;
