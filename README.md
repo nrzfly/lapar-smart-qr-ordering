@@ -25,6 +25,10 @@ A mobile-first QR code ordering system for **Lazaria Cafe**, developed for FAMA 
 
 Matches Chapter 4 of the report: **HTML5/CSS3/JavaScript** (server-rendered Jinja2 templates, mobile-first CSS, vanilla JS for the cart and notification polling), **Python Flask**, and **SQLite** (built-in).
 
+### UI template
+
+The look and feel is adapted from the **Davur** Bootstrap 5 restaurant admin dashboard + frontend template (`app/static/vendor/frontend` and `app/static/vendor/dashboard`), reusing its `style.css`, layout structure (header/sidebar), and card/table components. Only the CSS, core JS bundle, and images actually referenced by the adapted pages were copied in — the template's demo widgets (charts, calendar, email, chat) were not wired up since they're unrelated to Lapar Smart's use cases. Icon glyphs use Font Awesome via CDN rather than the template's bundled icon fonts, to keep the repo lean.
+
 ## Running locally
 
 ```bash

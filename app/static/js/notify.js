@@ -1,10 +1,30 @@
 // UC5: Receive Order Notification - polls the server every 3s to simulate a push notification.
 let lastStatus = null;
 
+const STATUS_HEADER_CLASS = {
+  Pending: "bg-danger",
+  Preparing: "bg-warning",
+  Ready: "bg-success",
+  Completed: "bg-secondary",
+};
+
 function paintStatus(status) {
   document.querySelectorAll(".status-step").forEach((el) => {
-    el.classList.toggle("active", el.dataset.status === status);
+    const active = el.dataset.status === status;
+    el.classList.toggle("bg-primary", active);
+    el.classList.toggle("text-white", active);
+    el.classList.toggle("fw-bold", active);
+    el.classList.toggle("bg-light", !active);
+    el.classList.toggle("text-muted", !active);
   });
+
+  const header = document.querySelector(".lapar-status-header");
+  if (header) {
+    Object.values(STATUS_HEADER_CLASS).forEach((c) => header.classList.remove(c));
+    header.classList.add(STATUS_HEADER_CLASS[status] || "bg-secondary");
+  }
+  const statusText = document.querySelector(".lapar-status-header h3");
+  if (statusText) statusText.textContent = status;
 }
 
 async function poll() {

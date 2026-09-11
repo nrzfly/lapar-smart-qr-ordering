@@ -1,0 +1,85 @@
+/* Lapar Smart — small overrides layered on top of the Davur template's own style.css */
+
+body.lapar-body { background: #f4f6fa; }
+
+.lapar-brand {
+  font-weight: 900;
+  font-size: 1.3rem;
+  color: var(--primary, #2f4cdd);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.lapar-subtitle {
+  font-size: 0.8rem;
+  color: #8a8a8a;
+  display: block;
+  margin-top: 4px;
+}
+.lapar-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 16px 100px;
+}
+.lapar-footer {
+  text-align: center;
+  color: #9099a3;
+  font-size: 0.78rem;
+  padding: 24px;
+}
+
+/* QR landing */
+.lapar-qr-box {
+  display: inline-block;
+  padding: 16px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(47, 76, 221, 0.12);
+}
+.lapar-qr-box img { border-radius: 8px; display: block; }
+
+/* Menu item cards */
+.lapar-item-card { margin-bottom: 20px; cursor: default; }
+.lapar-item-card .item-card { height: 100%; }
+.lapar-item-card img.dish-img { height: 140px; object-fit: cover; width: 100%; }
+.dish-icon-tile {
+  height: 110px;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #eef1fd, #f7f4ff);
+  color: var(--primary, #2f4cdd);
+  font-size: 2.4rem;
+}
+.lapar-qty-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 15px 15px;
+}
+.lapar-qty-control { display: flex; align-items: center; gap: 8px; }
+.lapar-qty-control .qty-btn {
+  width: 30px; height: 30px; border-radius: 50%; border: 1px solid #e4e6ef;
+  background: #fff; font-weight: 700; line-height: 1;
+}
+.lapar-qty-control .qty-input {
+  width: 42px; text-align: center; border: 1px solid #e4e6ef; border-radius: 6px; padding: 4px;
+}
+
+/* Sticky cart bar */
+.lapar-cart-bar {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  background: #fff; border-top: 1px solid #e4e6ef;
+  padding: 14px 20px; z-index: 50;
+  display: flex; align-items: center; justify-content: space-between;
+  box-shadow: 0 -6px 20px rgba(0,0,0,0.06);
+}
+
+/* Order status */
+.lapar-status-header h4, .lapar-status-header h3 { color: #fff; margin: 0; }
+.lapar-order-list { list-style: none; padding: 0; margin: 0; }
+.lapar-order-list li { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #eee; }
+.lapar-order-list li:last-child { border-bottom: none; }
+.lapar-notif-banner {
+  border-radius: 10px; padding: 14px 16px; margin-bottom: 18px; font-weight: 600;
+}
+
+/* Admin */
+.lapar-admin-nav .badge-count { margin-left: auto; }

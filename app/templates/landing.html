@@ -1,30 +1,43 @@
 {% extends "base.html" %}
 {% block title %}Scan to Order{% endblock %}
 {% block content %}
-<section class="hero">
-  <h1>Scan &amp; Order at Lazaria Cafe</h1>
-  <p class="muted">Scan the QR code below with your phone camera, or tap the button to open the menu directly on this device.</p>
+<div class="text-center mb-4">
+  <h2 class="fw-bold">Scan &amp; Order at Lazaria Cafe</h2>
+  <p class="text-muted">Scan the QR code below with your phone camera, or tap the button to open the menu directly on this device.</p>
+</div>
 
-  {% if qr_uri %}
-  <div class="qr-box">
+{% if qr_uri %}
+<div class="text-center mb-4">
+  <div class="lapar-qr-box">
     <img src="{{ qr_uri }}" alt="QR code to Lapar Smart menu" width="220" height="220">
-    <p class="qr-caption">UC1 &middot; Scan QR Code</p>
   </div>
-  {% endif %}
+  <p class="text-muted small mt-2"><i class="fa-solid fa-qrcode"></i> UC1 &middot; Scan QR Code</p>
+</div>
+{% endif %}
 
-  <a class="btn btn-primary btn-lg" href="{{ url_for('staff.menu') }}">Open Daily Menu</a>
+<div class="text-center mb-5">
+  <a class="btn btn-primary btn-lg btn-rounded" href="{{ url_for('staff.menu') }}"><i class="fa-solid fa-utensils me-2"></i>Open Daily Menu</a>
+  <p class="text-muted small mt-3">Direct link: <code>{{ menu_url }}</code></p>
+</div>
 
-  <p class="muted small">Direct link: <code>{{ menu_url }}</code></p>
-</section>
-
-<section class="card">
-  <h2>Meeting Room Catering</h2>
-  <p class="muted">Have a meeting event? Pre-order food and beverages to be served at your meeting room.</p>
-  <a class="btn btn-outline" href="{{ url_for('staff.menu') }}#meeting">Reserve Meeting Room Order</a>
-</section>
-
-<section class="card muted-card">
-  <h2>Cafe Admin?</h2>
-  <a class="btn btn-outline" href="{{ url_for('admin.login') }}">Go to Admin Dashboard</a>
-</section>
+<div class="row">
+  <div class="col-md-6 mb-4">
+    <div class="card h-100 shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title"><i class="fa-solid fa-calendar-check text-primary me-2"></i>Meeting Room Catering</h5>
+        <p class="card-text text-muted">Have a meeting event? Pre-order food and beverages to be served at your meeting room.</p>
+        <a class="btn btn-outline-primary btn-rounded" href="{{ url_for('staff.menu') }}#meeting">Reserve Meeting Room Order</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 mb-4">
+    <div class="card h-100 shadow-sm bg-light">
+      <div class="card-body">
+        <h5 class="card-title"><i class="fa-solid fa-user-shield text-primary me-2"></i>Cafe Admin?</h5>
+        <p class="card-text text-muted">Manage the daily menu, view orders, and update order status.</p>
+        <a class="btn btn-outline-primary btn-rounded" href="{{ url_for('admin.login') }}">Go to Admin Dashboard</a>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
