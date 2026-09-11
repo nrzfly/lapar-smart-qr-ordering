@@ -2,6 +2,17 @@
 
 body.lapar-body { background: #f4f6fa; }
 
+/* Davur's #main-wrapper starts at opacity:0 and only reaches opacity:1 once
+   custom.js adds a "show" class on load. Staff pages no longer load that
+   script at all (it existed only for the old nav toggle), so the page
+   would render completely blank without this override. Admin pages still
+   load it, but we force visibility here too rather than depend on
+   third-party JS timing for whether the page is visible at all. */
+#main-wrapper {
+  opacity: 1 !important;
+  overflow: visible !important;
+}
+
 /* ---------------- Top bar: centered logo + subtitle ---------------- */
 .lapar-topbar {
   background: #fff;
