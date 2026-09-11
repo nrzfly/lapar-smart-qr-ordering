@@ -29,6 +29,20 @@ body.lapar-body { background: #f4f6fa; }
   padding: 24px;
 }
 
+/* Landing hero */
+.lapar-hero {
+  background:
+    linear-gradient(rgba(10, 12, 20, 0.72), rgba(10, 12, 20, 0.8)),
+    url("../images/logo.jpeg") center 30% / cover no-repeat;
+  border-radius: 18px;
+  padding: 48px 20px 40px;
+  color: #fff;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+}
+.lapar-hero h2 { color: #fff; }
+.lapar-hero p { color: rgba(255, 255, 255, 0.78); }
+.lapar-hero code { background: rgba(255, 255, 255, 0.15); color: #fff; }
+
 /* QR landing */
 .lapar-qr-box {
   display: inline-block;
