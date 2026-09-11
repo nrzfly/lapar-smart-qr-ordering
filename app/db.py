@@ -26,7 +26,15 @@ def get_db():
     if turso_url:
         import turso_serverless
 
-        conn = turso_serverless.connect(turso_url, auth_token=os.environ.get("TURSO_AUTH_TOKEN"))
+        # Defensive: a stray leading BOM (﻿) from how the env var was
+        # set makes urllib reject the scheme ("unknown url type: ﻿libsql")
+        # since ﻿ isn't whitespace and .strip() alone won't remove it.
+        turso_url = turso_url.strip().lstrip("﻿")
+        auth_token = os.environ.get("TURSO_AUTH_TOKEN")
+        if auth_token:
+            auth_token = auth_token.strip().lstrip("﻿")
+
+        conn = turso_serverless.connect(turso_url, auth_token=auth_token)
         conn.row_factory = turso_serverless.Row
         try:
             conn.execute("PRAGMA foreign_keys = ON")
