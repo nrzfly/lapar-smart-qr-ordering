@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}Lapar Smart{% endblock %} · Lazaria Cafe</title>
-  <link rel="icon" type="image/png" href="{{ url_for('static', filename='vendor/frontend/images/favicon.png') }}">
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo.png') }}">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="{{ url_for('static', filename='vendor/frontend/css/style.css') }}" rel="stylesheet">
@@ -12,49 +12,50 @@
 </head>
 <body class="lapar-body">
   <div id="main-wrapper">
-    <header class="site-header mo-left header style-1">
-      <div class="sticky-header main-bar-wraper navbar-expand-lg">
-        <div class="main-bar clearfix">
-          <div class="container-fluid clearfix">
-            <div class="logo-header mostion logo-dark">
-              <a href="{{ url_for('staff.landing') }}" class="lapar-brand">
-                <i class="fa-solid fa-bowl-food"></i> Lapar Smart
-              </a>
-            </div>
-            <button class="navbar-toggler collapsed navicon" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-              <span></span><span></span><span></span>
-            </button>
-            <div class="extra-nav">
-              <div class="extra-cell">
-                <span class="lapar-subtitle">Lazaria Cafe &middot; FAMA</span>
-              </div>
-            </div>
-            <div class="header-nav navbar-collapse collapse" id="navbarNavDropdown">
-              <div class="close-nav">
-                <button type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-label="Close menu">&times;</button>
-              </div>
-              <ul class="nav navbar-nav navbar navbar-left">
-                <li class="{{ 'active' if request.endpoint == 'staff.landing' }}"><a href="{{ url_for('staff.landing') }}"><i class="fa-solid fa-qrcode"></i> Scan</a></li>
-                <li class="{{ 'active' if request.endpoint == 'staff.menu' }}"><a href="{{ url_for('staff.menu') }}"><i class="fa-solid fa-utensils"></i> Menu</a></li>
-                <li><a href="{{ url_for('admin.login') }}"><i class="fa-solid fa-user-shield"></i> Cafe Admin</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
+    <header class="lapar-topbar">
+      <a href="{{ url_for('staff.landing') }}" class="lapar-topbar-link">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Lapar Smart" class="lapar-logo-img">
+        <span class="lapar-topbar-sub">Lazaria Cafe &middot; FAMA</span>
+      </a>
     </header>
 
     <div class="lapar-page-body">
-      <div class="container-fluid lapar-container">
-        {% block content %}{% endblock %}
+      <div class="lapar-shell">
+        <aside class="lapar-panel lapar-panel-left">
+          <div class="lapar-panel-title">Menu</div>
+          <nav class="lapar-side-nav">
+            <a href="{{ url_for('staff.landing') }}" class="{{ 'active' if request.endpoint == 'staff.landing' }}"><i class="fa-solid fa-qrcode"></i><span>Scan</span></a>
+            <a href="{{ url_for('staff.menu') }}" class="{{ 'active' if request.endpoint == 'staff.menu' }}"><i class="fa-solid fa-utensils"></i><span>Menu</span></a>
+            <a href="{{ url_for('admin.login') }}"><i class="fa-solid fa-user-shield"></i><span>Cafe Admin</span></a>
+          </nav>
+        </aside>
+
+        <main class="lapar-panel-center">
+          <div class="lapar-container">
+            {% block content %}{% endblock %}
+          </div>
+        </main>
+
+        <aside class="lapar-panel lapar-panel-right">
+          <div class="lapar-side-card">
+            <i class="fa-solid fa-user-shield lapar-side-card-icon"></i>
+            <h6>Cafe Admin Login</h6>
+            <p>Manage the daily menu, view orders, and update order status.</p>
+            <a href="{{ url_for('admin.login') }}" class="btn btn-outline-primary btn-sm btn-rounded w-100">Login</a>
+          </div>
+          <div class="lapar-side-card">
+            <i class="fa-solid fa-calendar-check lapar-side-card-icon"></i>
+            <h6>Meeting Room Catering</h6>
+            <p>Booking a meeting? Order a bulk catering package for your event.</p>
+            <a href="{{ url_for('staff.menu') }}#meeting" class="btn btn-primary btn-sm btn-rounded w-100">Reserve Catering</a>
+          </div>
+        </aside>
       </div>
     </div>
 
     <footer class="lapar-footer">Lapar Smart: QR Menu Ordering System &mdash; FYP Demo</footer>
   </div>
 
-  <script src="{{ url_for('static', filename='vendor/frontend/vendor/global/global.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendor/frontend/js/custom.js') }}"></script>
   {% block scripts %}{% endblock %}
 </body>
 </html>

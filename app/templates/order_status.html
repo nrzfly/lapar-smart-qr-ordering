@@ -25,11 +25,17 @@
       {% endfor %}
     </div>
 
+    {% if order.order_type == "MeetingRoom" %}
+    <ul class="lapar-order-list mb-3">
+      <li><span>{{ order.package_name }} &times; {{ order.package_qty }} <span class="text-muted">({{ order.package_pax }} pax each)</span></span><span>RM {{ "%.2f"|format(order.total_amount) }}</span></li>
+    </ul>
+    {% else %}
     <ul class="lapar-order-list mb-3">
       {% for it in items %}
       <li><span>{{ it.name }} &times; {{ it.quantity }}</span><span>RM {{ "%.2f"|format(it.subtotal) }}</span></li>
       {% endfor %}
     </ul>
+    {% endif %}
     <div class="d-flex justify-content-between fw-bold fs-5 border-top pt-3">
       <span>Total</span><span>RM {{ "%.2f"|format(order.total_amount) }}</span>
     </div>

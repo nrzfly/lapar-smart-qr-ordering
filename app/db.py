@@ -54,7 +54,19 @@ CREATE TABLE IF NOT EXISTS orders (
     order_date TEXT NOT NULL,
     meeting_room TEXT,
     meeting_time TEXT,
+    package_name TEXT,
+    package_pax INTEGER,
+    package_qty INTEGER,
     FOREIGN KEY (staff_id) REFERENCES staff (staff_id)
+);
+
+CREATE TABLE IF NOT EXISTS catering_package (
+    package_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    pax INTEGER NOT NULL,
+    price REAL NOT NULL,
+    description TEXT,
+    is_available INTEGER NOT NULL DEFAULT 1
 );
 
 CREATE TABLE IF NOT EXISTS order_item (
@@ -109,6 +121,16 @@ def seed(conn):
     conn.executemany(
         "INSERT INTO menu_item (name, price, category, available_date, is_available) VALUES (?, ?, ?, ?, 1)",
         menu,
+    )
+
+    packages = [
+        ("Snack Box Package", 10, 120.00, "Assorted sandwiches, curry puffs & mineral water for 10 people."),
+        ("Standard Meeting Package", 20, 220.00, "Nasi lemak sets, finger food & drinks for 20 people."),
+        ("Premium Conference Package", 30, 320.00, "Full meal boxes, desserts & beverages for 30 people."),
+    ]
+    conn.executemany(
+        "INSERT INTO catering_package (name, pax, price, description, is_available) VALUES (?, ?, ?, ?, 1)",
+        packages,
     )
     conn.commit()
 

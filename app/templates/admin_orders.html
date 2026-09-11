@@ -37,7 +37,13 @@
           <tr>
             <td>#{{ o.order_id }}</td>
             <td>{{ o.staff_name }} <span class="text-muted small">({{ o.staff_id }})</span></td>
-            <td>{{ o.order_type }}{% if o.order_type == "MeetingRoom" %}<br><span class="text-muted small">{{ o.meeting_room }}</span>{% endif %}</td>
+            <td>
+              {{ o.order_type }}
+              {% if o.order_type == "MeetingRoom" %}
+              <br><span class="text-muted small">{{ o.meeting_room }}</span>
+              <br><span class="text-muted small">{{ o.package_name }} &times;{{ o.package_qty }} ({{ o.package_pax }} pax)</span>
+              {% endif %}
+            </td>
             <td>RM {{ "%.2f"|format(o.total_amount) }}</td>
             <td><span class="badge {{ badge_class[o.status] }}">{{ o.status }}</span></td>
             <td class="text-muted small">{{ o.order_date }}</td>

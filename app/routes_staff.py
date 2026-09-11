@@ -38,23 +38,52 @@ def menu():
         "SELECT * FROM menu_item WHERE available_date = ? AND is_available = 1 ORDER BY category, name",
         (today_str(),),
     ).fetchall()
+    packages = db.execute(
+        "SELECT * FROM catering_package WHERE is_available = 1 ORDER BY pax"
+    ).fetchall()
     db.close()
     staff_id = request.args.get("staff_id", "S001")
-    return render_template("menu.html", items=items, staff_id=staff_id, today=today_str())
+    return render_template("menu.html", items=items, packages=packages, staff_id=staff_id, today=today_str())
 
 
 @staff_bp.route("/order", methods=["POST"])
 def place_order():
-    """UC3: Place Order (counter order) and UC4: Reserve Meeting Room Order."""
+    """UC3: Place Order (counter order) and UC4: Reserve Meeting Room Order (bulk catering package)."""
     staff_id = request.form.get("staff_id", "S001")
     order_type = request.form.get("order_type", "Counter")
     meeting_room = request.form.get("meeting_room") or None
     meeting_time = request.form.get("meeting_time") or None
 
+    db = get_db()
+
+    if order_type == "MeetingRoom":
+        package_id = request.form.get("package_id")
+        package_qty = int(request.form.get("package_qty") or 0)
+        package = None
+        if package_id:
+            package = db.execute(
+                "SELECT * FROM catering_package WHERE package_id = ?", (package_id,)
+            ).fetchone()
+
+        if not package or package_qty <= 0:
+            db.close()
+            return redirect(url_for("staff.menu", staff_id=staff_id, error="empty_cart"))
+
+        total = package["price"] * package_qty
+        db.execute(
+            "INSERT INTO orders (staff_id, order_type, status, total_amount, order_date, "
+            "meeting_room, meeting_time, package_name, package_pax, package_qty) "
+            "VALUES (?, 'MeetingRoom', 'Pending', ?, ?, ?, ?, ?, ?, ?)",
+            (staff_id, total, now_str(), meeting_room, meeting_time, package["name"], package["pax"], package_qty),
+        )
+        order_id = db.execute("SELECT last_insert_rowid() AS id").fetchone()["id"]
+        db.commit()
+        db.close()
+        return redirect(url_for("staff.order_status", order_id=order_id, staff_id=staff_id))
+
     item_ids = request.form.getlist("item_id")
     quantities = request.form.getlist("quantity")
 
-    db = get_db()
     cart = []
     total = 0.0
     for item_id, qty in zip(item_ids, quantities):
