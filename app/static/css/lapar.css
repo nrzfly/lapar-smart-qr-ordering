@@ -300,11 +300,29 @@ body.lapar-body { background: #f4f6fa; }
 }
 .lapar-footer {
   text-align: center;
-  color: var(--lapar-brown);
+  background: var(--lapar-brown-dark);
+  color: var(--lapar-cream-text);
   font-size: 0.78rem;
-  padding: 24px;
+  padding: 20px 24px;
   position: relative;
   z-index: 1;
+}
+.lapar-footer-credit {
+  margin-top: 4px;
+  color: var(--lapar-muted-on-brown);
+  font-size: 0.72rem;
+}
+.lapar-admin-footer {
+  background: var(--lapar-brown-dark) !important;
+}
+.lapar-admin-footer .copyright p {
+  color: var(--lapar-cream-text);
+  margin-bottom: 2px;
+  font-size: 0.85rem;
+}
+.lapar-admin-footer .copyright p.lapar-footer-credit {
+  color: var(--lapar-muted-on-brown);
+  font-size: 0.72rem;
 }
 
 /* QR landing */

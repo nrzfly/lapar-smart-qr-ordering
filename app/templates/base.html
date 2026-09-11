@@ -41,7 +41,7 @@
             <i class="fa-solid fa-user-shield lapar-side-card-icon"></i>
             <h6>Cafe Admin Login</h6>
             <p>Manage the daily menu, view orders, and update order status.</p>
-            <a href="{{ url_for('admin.login') }}" class="btn btn-outline-primary btn-sm btn-rounded w-100">Login</a>
+            <a href="{{ url_for('admin.login') }}" class="btn btn-primary btn-sm btn-rounded w-100">Login</a>
           </div>
           <div class="lapar-side-card">
             <i class="fa-solid fa-calendar-check lapar-side-card-icon"></i>
@@ -53,7 +53,10 @@
       </div>
     </div>
 
-    <footer class="lapar-footer">Lapar Smart: QR Menu Ordering System &mdash; FYP Demo</footer>
+    <footer class="lapar-footer">
+      <div>Lapar Smart: QR Menu Ordering System &mdash; FYP Demo</div>
+      <div class="lapar-footer-credit">&copy; 2026 Abdul Rashid Bin Alias (B24030058). All rights reserved.</div>
+    </footer>
   </div>
 
   {% block scripts %}{% endblock %}
