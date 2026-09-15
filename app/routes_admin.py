@@ -135,9 +135,10 @@ def menu():
         db.close()
         return redirect(url_for("admin.menu"))
 
+    # Admin manages the whole catalog (shown and hidden alike), not just
+    # today's date -- see the matching note in staff.menu().
     items = db.execute(
-        "SELECT * FROM menu_item WHERE available_date = ? ORDER BY category, name",
-        (today_str(),),
+        "SELECT * FROM menu_item ORDER BY category, name",
     ).fetchall()
     db.close()
     return render_template("admin_menu.html", items=items, today=today_str())

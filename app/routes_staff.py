@@ -35,9 +35,12 @@ def menu():
     """UC2: View Daily Menu."""
     staff_id = request.args.get("staff_id", "S001")
     db = get_db()
+    # Not filtered by available_date: an item stays on the menu across days
+    # once added, until the admin explicitly hides or deletes it (see
+    # admin.menu() below) -- available_date is only a "date added" record,
+    # not an expiry, so the menu doesn't silently go empty every midnight.
     items = db.execute(
-        "SELECT * FROM menu_item WHERE available_date = ? AND is_available = 1 ORDER BY category, name",
-        (today_str(),),
+        "SELECT * FROM menu_item WHERE is_available = 1 ORDER BY category, name",
     ).fetchall()
     packages = db.execute(
         "SELECT * FROM catering_package WHERE is_available = 1 ORDER BY pax"
