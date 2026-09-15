@@ -60,7 +60,8 @@ CREATE TABLE IF NOT EXISTS admin (
     admin_id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
     role TEXT,
-    active INTEGER NOT NULL DEFAULT 1
+    active INTEGER NOT NULL DEFAULT 1,
+    password_hash TEXT
 );
 
 CREATE TABLE IF NOT EXISTS menu_item (
@@ -169,6 +170,15 @@ def init_db():
     conn = get_db()
     conn.executescript(SCHEMA)
     conn.commit()
+    # Migration for databases created before password_hash existed (both the
+    # local sqlite file and the already-provisioned Turso database) -- a
+    # fresh CREATE TABLE above already includes the column, so this is a
+    # no-op there and only does real work on an older database.
+    try:
+        conn.execute("ALTER TABLE admin ADD COLUMN password_hash TEXT")
+        conn.commit()
+    except Exception:
+        pass
     row = conn.execute("SELECT COUNT(*) AS c FROM menu_item").fetchone()
     if row["c"] == 0:
         seed(conn)

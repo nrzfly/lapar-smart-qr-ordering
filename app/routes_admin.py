@@ -7,8 +7,8 @@ from flask import (
     redirect,
     url_for,
     session,
-    current_app,
 )
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from .db import get_db, now_str, today_str
 
@@ -29,19 +29,70 @@ def login_required(view):
 
 @admin_bp.route("/login", methods=["GET", "POST"])
 def login():
+    """RBAC: authenticates against a per-account password hash rather than
+    a single shared passcode. An admin_id only has a usable account once
+    it has completed /admin/register (see register() below)."""
     error = None
     if request.method == "POST":
-        passcode = request.form.get("passcode", "")
-        if passcode == current_app.config["ADMIN_PASSCODE"]:
+        admin_id = request.form.get("admin_id", "").strip()
+        password = request.form.get("password", "")
+        db = get_db()
+        row = db.execute("SELECT * FROM admin WHERE admin_id = ?", (admin_id,)).fetchone()
+        db.close()
+        if row is None or not row["active"]:
+            error = "No active Cafe Admin account with that ID."
+        elif not row["password_hash"]:
+            error = "This account has not completed registration yet. Use the registration link below."
+        elif not check_password_hash(row["password_hash"], password):
+            error = "Incorrect admin ID or password."
+        else:
             session["is_admin"] = True
+            session["admin_id"] = admin_id
             return redirect(url_for("admin.orders"))
-        error = "Incorrect passcode. Please try again."
     return render_template("admin_login.html", error=error)
+
+
+@admin_bp.route("/register", methods=["GET", "POST"])
+def register():
+    """RBAC gate: registration only succeeds for an admin_id that a Cafe
+    Admin has already added via Manage Users (UC10) -- i.e. that row must
+    already exist in the `admin` table with no password set yet. A FAMA
+    staff member has no such row (they only exist in `staff`), so no ID
+    they type here can ever pass this check -- only pre-authorized Cafe
+    Admin accounts can be activated."""
+    error = None
+    success = None
+    if request.method == "POST":
+        admin_id = request.form.get("admin_id", "").strip()
+        password = request.form.get("password", "")
+        confirm = request.form.get("confirm_password", "")
+
+        db = get_db()
+        row = db.execute("SELECT * FROM admin WHERE admin_id = ?", (admin_id,)).fetchone()
+
+        if row is None or not row["active"]:
+            error = "This ID is not authorized as a Cafe Admin. Ask an existing Cafe Admin to add it under Manage Users first."
+        elif row["password_hash"]:
+            error = "This account has already completed registration. Please log in instead."
+        elif len(password) < 8:
+            error = "Password must be at least 8 characters."
+        elif password != confirm:
+            error = "Passwords do not match."
+        else:
+            db.execute(
+                "UPDATE admin SET password_hash = ? WHERE admin_id = ?",
+                (generate_password_hash(password), admin_id),
+            )
+            db.commit()
+            success = "Registration complete. You can now log in."
+        db.close()
+    return render_template("admin_register.html", error=error, success=success)
 
 
 @admin_bp.route("/logout")
 def logout():
     session.pop("is_admin", None)
+    session.pop("admin_id", None)
     return redirect(url_for("admin.login"))
 
 

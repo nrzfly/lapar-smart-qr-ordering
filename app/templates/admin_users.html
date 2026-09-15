@@ -44,12 +44,13 @@
   <div class="card-body p-0">
     <div class="table-responsive">
       <table class="table table-hover mb-0">
-        <thead><tr><th>Admin ID</th><th>Name</th><th>Role</th><th>Status</th><th></th></tr></thead>
+        <thead><tr><th>Admin ID</th><th>Name</th><th>Role</th><th>Status</th><th>Registration</th><th></th></tr></thead>
         <tbody>
           {% for a in admin_rows %}
           <tr>
             <td>{{ a.admin_id }}</td><td>{{ a.name }}</td><td>{{ a.role }}</td>
             <td>{% if a.active %}<span class="badge bg-success">Active</span>{% else %}<span class="badge bg-secondary">Deactivated</span>{% endif %}</td>
+            <td>{% if a.password_hash %}<span class="badge bg-success">Registered</span>{% else %}<span class="badge bg-warning text-dark">Pending</span>{% endif %}</td>
             <td>
               <form method="post">
                 <input type="hidden" name="action" value="toggle">
