@@ -46,12 +46,14 @@
   <h2 class="fw-bold mb-0">Today's Menu <span class="text-muted fs-6">({{ today }})</span></h2>
   <div class="d-flex align-items-center gap-2">
     <label class="text-muted small mb-0">Staff ID</label>
-    <input type="text" name="staff_id" form="order-form" value="{{ staff_id }}" class="form-control form-control-sm" style="width:110px">
+    <input type="text" name="staff_id" form="order-form" value="{{ staff_id }}" class="form-control form-control-sm" style="width:110px" required>
   </div>
 </div>
 
 {% if request.args.get('error') == 'empty_cart' %}
 <div class="alert alert-danger">Please select at least one item (or a catering package) before submitting your order.</div>
+{% elif request.args.get('error') == 'invalid_staff' %}
+<div class="alert alert-danger">"{{ staff_id }}" is not a recognized, active Staff ID. Please check it and try again.</div>
 {% endif %}
 
 <form id="order-form" method="post" action="{{ url_for('staff.place_order') }}">

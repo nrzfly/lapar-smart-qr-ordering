@@ -58,12 +58,24 @@ def menu():
 @staff_bp.route("/order", methods=["POST"])
 def place_order():
     """UC3: Place Order (counter order) and UC4: Reserve Meeting Room Order (bulk catering package)."""
-    staff_id = request.form.get("staff_id", "S001")
+    staff_id = request.form.get("staff_id", "S001").strip()
     order_type = request.form.get("order_type", "Counter")
     meeting_room = request.form.get("meeting_room") or None
     meeting_time = request.form.get("meeting_time") or None
 
     db = get_db()
+
+    # orders.staff_id is a foreign key to staff.staff_id: without this
+    # check, a blank or made-up Staff ID (the field has no server-side
+    # validation) reaches the INSERT below and raises a raw
+    # FOREIGN KEY constraint failed IntegrityError -- a 500 instead of a
+    # message telling the staff member what actually went wrong.
+    staff_row = db.execute(
+        "SELECT 1 FROM staff WHERE staff_id = ? AND active = 1", (staff_id,)
+    ).fetchone()
+    if staff_row is None:
+        db.close()
+        return redirect(url_for("staff.menu", staff_id=staff_id, error="invalid_staff"))
 
     if order_type == "MeetingRoom":
         package_id = request.form.get("package_id")
