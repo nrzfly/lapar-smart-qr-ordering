@@ -184,6 +184,32 @@ body.lapar-body { background: #f4f6fa; }
   letter-spacing: 0.3px;
 }
 
+/* ---------------- Full-height layout (staff pages only) ----------------
+   Scoped to body.lapar-body so it never touches the admin dashboard,
+   which reuses the same #main-wrapper id with a completely different
+   (sidebar) layout. Without this, a short page like the landing/homepage
+   (just a heading + QR code) stopped as soon as its content ended,
+   leaving a plain gap below the footer on any screen taller than that --
+   makes the site feel a different "size" page to page. Now the wallpaper
+   + shell always stretch to fill the viewport, pinning the footer to the
+   bottom, while still growing taller than the viewport on long pages
+   (e.g. the menu) exactly as before. */
+body.lapar-body {
+  min-height: 100vh;
+}
+body.lapar-body #main-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+body.lapar-body .lapar-page-body {
+  flex: 1 0 auto;
+}
+body.lapar-body .lapar-topbar,
+body.lapar-body .lapar-footer {
+  flex-shrink: 0;
+}
+
 /* ---------------- Cafe wallpaper background ---------------- */
 .lapar-page-body {
   position: relative;
