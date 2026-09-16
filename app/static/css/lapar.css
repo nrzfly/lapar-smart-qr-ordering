@@ -99,6 +99,16 @@ body.lapar-body { background: #f4f6fa; }
   background-color: var(--lapar-cream) !important;
   border-color: var(--lapar-brown-dark) !important;
 }
+
+/* Admin header's Logout button (.btn-outline-danger). The vendor Davur
+   skin hardcodes white hover text ("style.css" .btn-outline-danger:hover)
+   for every outline-* variant regardless of theme color; this is the only
+   one actually used in the admin UI. */
+.btn-outline-danger:hover,
+.btn-outline-danger:focus,
+.btn-outline-danger:active {
+  color: #9E8760 !important;
+}
 .card .btn-outline-primary {
   --bs-btn-color: var(--lapar-cream);
   --bs-btn-border-color: var(--lapar-cream);
