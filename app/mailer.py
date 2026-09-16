@@ -2,6 +2,7 @@ import os
 import smtplib
 import warnings
 from email.mime.text import MIMEText
+from email.utils import formataddr
 
 
 def send_password_reset_email(to_email, admin_id, reset_url):
@@ -36,7 +37,11 @@ def send_password_reset_email(to_email, admin_id, reset_url):
     )
     msg = MIMEText(body)
     msg["Subject"] = "Reset your Lapar Smart Cafe Admin password"
-    msg["From"] = gmail_address
+    # Display name only -- the underlying address is still gmail_address
+    # (Gmail's SMTP rejects a From that doesn't match the authenticated
+    # account/alias), but this is what recipients see in their inbox
+    # unless they open full headers.
+    msg["From"] = formataddr(("Lazaria Cafe", gmail_address))
     msg["To"] = to_email
 
     try:
