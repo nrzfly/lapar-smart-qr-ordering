@@ -177,6 +177,14 @@ body.lapar-body { background: #f4f6fa; }
   height: 56px;
   width: auto;
 }
+
+/* Admin dashboard sidebar brand mark -- nav-header is 80px tall with the
+   logo-abbr span capped at max-width:45px, so this needs to be smaller
+   than the staff-facing .lapar-logo-img. */
+.lapar-admin-logo-img {
+  height: 40px;
+  width: auto;
+}
 .lapar-topbar-sub {
   font-size: 0.85rem;
   font-weight: 600;
