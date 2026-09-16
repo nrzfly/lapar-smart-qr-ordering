@@ -2,6 +2,9 @@
 {% block title %}Menu{% endblock %}
 {% block page_title %}<i class="fa-solid fa-utensils me-2 text-primary"></i>UC7 &middot; Update Daily Menu{% endblock %}
 {% block content %}
+{% if error == "item_in_use" %}
+<div class="alert alert-danger">This item already has past orders and can't be deleted. Use Hide instead to remove it from the staff menu while keeping order history intact.</div>
+{% endif %}
 <div class="card shadow-sm">
   <div class="card-header d-flex justify-content-between align-items-center">
     <h5 class="mb-0">Today's Menu <span class="text-muted small">({{ today }})</span></h5>

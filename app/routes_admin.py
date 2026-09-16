@@ -200,6 +200,18 @@ def menu():
             db.commit()
         elif action == "delete":
             item_id = request.form["item_id"]
+            # menu_item.item_id is referenced by order_item.item_id (FK,
+            # foreign_keys=ON) -- deleting an item that already appears in
+            # a past order would violate that constraint and 500. Hiding
+            # (the toggle action above) is the correct way to retire an
+            # item that has order history; hard delete is only safe for
+            # one that was never ordered.
+            in_use = db.execute(
+                "SELECT 1 FROM order_item WHERE item_id = ?", (item_id,)
+            ).fetchone()
+            if in_use:
+                db.close()
+                return redirect(url_for("admin.menu", error="item_in_use"))
             db.execute("DELETE FROM menu_item WHERE item_id = ?", (item_id,))
             db.commit()
         db.close()
@@ -211,7 +223,9 @@ def menu():
         "SELECT * FROM menu_item ORDER BY category, name",
     ).fetchall()
     db.close()
-    return render_template("admin_menu.html", items=items, today=today_str())
+    return render_template(
+        "admin_menu.html", items=items, today=today_str(), error=request.args.get("error")
+    )
 
 
 @admin_bp.route("/orders", methods=["GET", "POST"])
