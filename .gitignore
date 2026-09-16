@@ -8,3 +8,4 @@ instance/
 .env
 
 .vercel
+.env*
