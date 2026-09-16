@@ -1,3 +1,4 @@
+import secrets
 from functools import wraps
 
 from flask import (
@@ -10,7 +11,8 @@ from flask import (
 )
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from .db import get_db, now_str, today_str
+from .db import get_db, now_str, today_str, future_str
+from .mailer import send_password_reset_email
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 
@@ -87,6 +89,74 @@ def register():
             success = "Registration complete. You can now log in."
         db.close()
     return render_template("admin_register.html", error=error, success=success)
+
+
+@admin_bp.route("/forgot-password", methods=["GET", "POST"])
+def forgot_password():
+    """Self-service password reset. Only ever reaches an inbox the account
+    owner already controls, since it requires an email that a Cafe Admin
+    (see users()'s set_email action) already put on file for that
+    admin_id -- there's no way to attach an arbitrary email to someone
+    else's account from here."""
+    sent = False
+    if request.method == "POST":
+        admin_id = request.form.get("admin_id", "").strip()
+        db = get_db()
+        row = db.execute(
+            "SELECT * FROM admin WHERE admin_id = ? AND active = 1", (admin_id,)
+        ).fetchone()
+        if row and row["email"] and row["password_hash"]:
+            token = secrets.token_urlsafe(32)
+            db.execute(
+                "INSERT INTO password_reset (token, admin_id, expires_at, used) VALUES (?, ?, ?, 0)",
+                (token, admin_id, future_str(30)),
+            )
+            db.commit()
+            reset_url = url_for("admin.reset_password", token=token, _external=True)
+            send_password_reset_email(row["email"], admin_id, reset_url)
+        db.close()
+        # Always show the same confirmation regardless of whether that
+        # admin_id/email actually exists -- otherwise this page could be
+        # used to enumerate valid Cafe Admin IDs.
+        sent = True
+    return render_template("admin_forgot_password.html", sent=sent)
+
+
+@admin_bp.route("/reset-password/<token>", methods=["GET", "POST"])
+def reset_password(token):
+    db = get_db()
+    reset_row = db.execute(
+        "SELECT * FROM password_reset WHERE token = ?", (token,)
+    ).fetchone()
+    valid = (
+        reset_row is not None
+        and not reset_row["used"]
+        and reset_row["expires_at"] > now_str()
+    )
+    error = None
+    success = None
+    if not valid:
+        error = "This reset link is invalid or has expired. Request a new one below."
+    elif request.method == "POST":
+        password = request.form.get("password", "")
+        confirm = request.form.get("confirm_password", "")
+        if len(password) < 8:
+            error = "Password must be at least 8 characters."
+        elif password != confirm:
+            error = "Passwords do not match."
+        else:
+            db.execute(
+                "UPDATE admin SET password_hash = ? WHERE admin_id = ?",
+                (generate_password_hash(password), reset_row["admin_id"]),
+            )
+            db.execute("UPDATE password_reset SET used = 1 WHERE token = ?", (token,))
+            db.commit()
+            success = "Password updated. You can now log in."
+            valid = False
+    db.close()
+    return render_template(
+        "admin_reset_password.html", error=error, success=success, valid=valid
+    )
 
 
 @admin_bp.route("/logout")
@@ -207,9 +277,10 @@ def users():
                     (new_id, name, extra),
                 )
             else:
+                email = request.form.get("email", "").strip() or None
                 db.execute(
-                    "INSERT INTO admin (admin_id, name, role, active) VALUES (?, ?, ?, 1)",
-                    (new_id, name, extra),
+                    "INSERT INTO admin (admin_id, name, role, active, email) VALUES (?, ?, ?, 1, ?)",
+                    (new_id, name, extra, email),
                 )
             db.commit()
         elif action == "toggle":
@@ -218,6 +289,15 @@ def users():
                 f"UPDATE {table} SET active = 1 - active WHERE {id_col} = ?",
                 (user_id,),
             )
+            db.commit()
+        elif action == "set_email":
+            # Admin-only: lets a Cafe Admin put an email on file for any
+            # admin_id (including one seeded before this column existed),
+            # which is what admin.forgot_password() requires before it
+            # will ever send a reset link for that account.
+            user_id = request.form["user_id"]
+            email = request.form.get("email", "").strip() or None
+            db.execute("UPDATE admin SET email = ? WHERE admin_id = ?", (email, user_id))
             db.commit()
         db.close()
         return redirect(url_for("admin.users"))

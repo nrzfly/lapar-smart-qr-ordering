@@ -1,6 +1,6 @@
 import os
 import sqlite3
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 
 _INITIALIZED = False
 
@@ -61,7 +61,16 @@ CREATE TABLE IF NOT EXISTS admin (
     name TEXT NOT NULL,
     role TEXT,
     active INTEGER NOT NULL DEFAULT 1,
-    password_hash TEXT
+    password_hash TEXT,
+    email TEXT
+);
+
+CREATE TABLE IF NOT EXISTS password_reset (
+    token TEXT PRIMARY KEY,
+    admin_id TEXT NOT NULL,
+    expires_at TEXT NOT NULL,
+    used INTEGER NOT NULL DEFAULT 0,
+    FOREIGN KEY (admin_id) REFERENCES admin (admin_id)
 );
 
 CREATE TABLE IF NOT EXISTS menu_item (
@@ -179,6 +188,11 @@ def init_db():
         conn.commit()
     except Exception:
         pass
+    try:
+        conn.execute("ALTER TABLE admin ADD COLUMN email TEXT")
+        conn.commit()
+    except Exception:
+        pass
     row = conn.execute("SELECT COUNT(*) AS c FROM menu_item").fetchone()
     if row["c"] == 0:
         seed(conn)
@@ -192,3 +206,7 @@ def now_str():
 
 def today_str():
     return date.today().isoformat()
+
+
+def future_str(minutes):
+    return (datetime.now() + timedelta(minutes=minutes)).strftime("%Y-%m-%d %H:%M:%S")
