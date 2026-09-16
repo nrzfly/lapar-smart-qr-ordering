@@ -253,31 +253,6 @@ body.lapar-body .lapar-footer {
   flex: 1 0 auto;
 }
 
-/* Desktop only, and only on pages that opt in via the .lapar-shell-fill
-   modifier (short pages like the landing page -- see base.html's
-   shell_class block): make the visible boxes inside each column (not
-   just the invisible grid cell) stretch to fill that full height, so a
-   short page's nav/QR/cards look as "full" as a long page's item grid
-   instead of floating near the top with bare wallpaper below.
-   Deliberately NOT applied to every page: on a long page like the menu,
-   stretching+centering the sticky nav within a column as tall as the
-   whole scrollable item grid pushes its (vertically centered) links out
-   of view instead of leaving them visible near the top -- exactly the
-   sticky-nav behaviour those pages depend on, so they keep the plain
-   top-aligned layout instead. */
-@media only screen and (min-width: 992px) {
-  .lapar-shell-fill { align-items: stretch; }
-  .lapar-shell-fill .lapar-panel-left { display: flex; flex-direction: column; }
-  .lapar-shell-fill .lapar-side-nav { flex: 1 1 auto; justify-content: center; }
-  .lapar-shell-fill .lapar-panel-right { display: flex; flex-direction: column; gap: 16px; }
-  .lapar-shell-fill .lapar-panel-right .lapar-side-card {
-    flex: 1 1 auto;
-    margin-bottom: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-}
 .lapar-panel {
   position: sticky;
   top: 20px;
@@ -412,8 +387,14 @@ body.lapar-body .lapar-footer {
   color: var(--lapar-cream-text);
   font-size: 0.78rem;
   padding: 20px 24px;
-  position: relative;
-  z-index: 1;
+  /* No position/z-index here: .lapar-shell (a sibling's descendant) has
+     its own z-index:1, which traps the fixed .lapar-cart-bar inside that
+     local stacking context; if this footer also claimed z-index:1, the
+     tie was resolved by DOM order in the footer's favor, painting it
+     over the "Submit Order" bar on any page short enough to scroll to
+     the very bottom. Leaving the footer as a plain in-flow box (z-index:
+     auto) lets the shell's positioned context -- and the cart bar inside
+     it -- paint above it as intended. */
 }
 .lapar-footer-credit {
   margin-top: 4px;
