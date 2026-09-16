@@ -156,6 +156,15 @@ body.lapar-body { background: #f4f6fa; }
 /* .table hardcodes its own text color rather than inheriting from .card. */
 .table { --bs-table-color: var(--lapar-cream-text); }
 .table-hover > tbody > tr:hover > * { color: var(--lapar-cream-text); --bs-table-accent-bg: rgba(255, 255, 255, 0.06); }
+/* The Davur skin also sets tr:hover's own background-color directly
+   (".table.table-hover tr:hover { background-color: #f1f1f1; }" in
+   style.css), which sits behind/around the cells and shows through the
+   card's brown -- the --bs-table-accent-bg override above alone doesn't
+   reach it. Pin the row itself too. */
+.table.table-hover tr:hover,
+.table-hover > tbody > tr:hover {
+  background-color: var(--lapar-brown-light) !important;
+}
 
 /* bg-light (category chip) stays legible on brown; status colors
    (danger/warning/success/secondary) are untouched on purpose. */
