@@ -213,6 +213,8 @@ body.lapar-body .lapar-footer {
 /* ---------------- Cafe wallpaper background ---------------- */
 .lapar-page-body {
   position: relative;
+  display: flex;
+  flex-direction: column;
   background-color: #fbf3e7;
   background-image:
     radial-gradient(circle at 8% 20%, rgba(196, 142, 75, 0.16) 0, transparent 42%),
@@ -233,6 +235,7 @@ body.lapar-body .lapar-footer {
 
 /* ---------------- 3-column shell ---------------- */
 .lapar-shell {
+  width: 100%;
   max-width: 1180px;
   margin: 0 auto;
   padding: 24px 16px 60px;
@@ -242,6 +245,12 @@ body.lapar-body .lapar-footer {
   align-items: start;
   position: relative;
   z-index: 1;
+  /* Stretch to fill .lapar-page-body's full height (itself flexed to
+     fill the viewport, see above) instead of only taking the height of
+     its own content -- keeps a short page's shell/panels the same
+     "size" as a long page's, with the wallpaper never visible as a bare
+     gap below the grid on short pages like the homepage. */
+  flex: 1 0 auto;
 }
 .lapar-panel {
   position: sticky;
