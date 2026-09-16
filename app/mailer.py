@@ -12,6 +12,13 @@ def send_password_reset_email(to_email, admin_id, reset_url):
     an email couldn't be sent) but should log it."""
     gmail_address = os.environ.get("GMAIL_ADDRESS")
     gmail_app_password = os.environ.get("GMAIL_APP_PASSWORD")
+    if gmail_address:
+        # Defensive: a stray leading BOM (﻿) from how the env var was set
+        # (seen previously with TURSO_DATABASE_URL/TURSO_AUTH_TOKEN, see
+        # db.py) breaks smtplib's ascii-only SMTP command encoding.
+        gmail_address = gmail_address.strip().lstrip("﻿")
+    if gmail_app_password:
+        gmail_app_password = gmail_app_password.strip().lstrip("﻿")
     if not gmail_address or not gmail_app_password:
         warnings.warn(
             "GMAIL_ADDRESS / GMAIL_APP_PASSWORD are not set: password reset "
